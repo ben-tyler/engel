@@ -29,8 +29,7 @@
    (button
     #:style (list 'border 'multi-line)
     (obs-map @todo-state car)
-    ;;(get-button-string @todo-state)
-    (lambda () ( obs-update! @todo-state update-todo-state)))))
+    (obs-update! @todo-state update-todo-state)))))
 
 (define (map-to-buttons li)
   (map (lambda (v)
