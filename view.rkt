@@ -1,4 +1,4 @@
-#lang racket/base
+#lang racket
 (require racket/gui/easy
          racket/gui/easy/operator)
 
@@ -7,10 +7,11 @@
                     (1 . "Get things done" . not-done))))
 
 (define (mark-as-done key-state)
-  (list (car key-state) 'done))
+ (println (~a key-state "marking as done"))
+ (list (car key-state) 'done))
  
 (define (append-todo todos)
-  (define next-id (add1 (apply max (map cadr todos))))
+  (define next-id (mark-as-done (apply max (map cadr todos))))
   (append todos `((,next-id . "one more thing" . not-done))))
  
 (define (update-todo todos k proc)
@@ -22,7 +23,7 @@
 (define (todo @todo action)
   (hpanel
    #:stretch '(#t #f)
-   (text (obs-peek @todo))
+   (text (obs-map @todo (λ (i) (~a i))))
    (button "λ" (λ () (action mark-as-done)))))
  
 (render
@@ -37,7 +38,6 @@
     @todos
     #:key car
     (λ (k @entry)
-      (todo
-       (@entry . ~> . car)
+      (todo @entry
        (λ (proc)
          (@todos . <~ . (λ (todos) (update-todo todos k proc))))))))))
