@@ -1,22 +1,23 @@
 #lang racket
 (require racket/gui/easy
-         racket/gui/easy/operator)
+         racket/gui/easy/operator
+         "data.rkt")
 
-(provide to-do-panel
+(provide todo-panel
          create-to-do-panel)
          
+(define (generate-todos-from-data)
+  (map (λ (i) (list i 0 'not-done))(todo-data)))
 
-(define @todos (@ '(
-                    (0 . "Get nothing done" . not-done)
-                    (1 . "Get things done" . not-done))))
+(define @todos (@ (generate-todos-from-data)))
+
 
 (define (mark-as-done key-state)
- (println (~a key-state "marking as done"))
  (list (car key-state) 'done))
  
-(define (append-todo todos)
-  (define next-id (mark-as-done (apply max (map cadr todos))))
-  (append todos `((,next-id . "one more thing" . not-done))))
+(define (append-todo todos new-item)
+  (define next-id (apply max (map cadr todos)))
+  (append todos `((,next-id . new-item . not-done))))
  
 (define (update-todo todos k proc)
   (for/list ([entry (in-list todos)])
@@ -36,7 +37,7 @@
     #:stretch '(#t #f)
     (button "Add todo" (λ () (@todos . <~ . append-todo)))))
 
-(define (to-do-panel)
+(define (todo-panel)
   (list-view
     @todos
     #:key car
@@ -44,3 +45,4 @@
       (todo @entry
        (λ (proc)
          (@todos . <~ . (λ (todos) (update-todo todos k proc))))))))
+

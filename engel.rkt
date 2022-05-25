@@ -11,4 +11,4 @@
   (vpanel
    (spell-caster-panel)
    (create-to-do-panel)
-   (to-do-panel))))
+   (todo-panel))))
